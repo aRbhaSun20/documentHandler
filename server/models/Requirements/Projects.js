@@ -10,11 +10,9 @@ const userSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
   },
   createdBy: {
     type: String,
-    required: true,
     required: true,
     ref: "Users",
   },
@@ -26,13 +24,11 @@ const userSchema = new mongoose.Schema({
     type: [
       {
         roles: {
-          type: String,
-          required: true,
+          type: [String],
           enum: PROJECT_ROLES_ENUM,
         },
         userId: {
           type: String,
-          required: true,
           ref: "Users",
         },
       },
@@ -45,4 +41,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = new mongoose.model("RequirementProjects", userSchema);
+module.exports = new mongoose.model("rmProjects", userSchema);

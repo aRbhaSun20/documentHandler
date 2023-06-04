@@ -11,15 +11,15 @@ const projectRouter = Router();
 
 // GET Request
 projectRouter.get("/project", getAllProjects);
-projectRouter.get("/project:id", getProject);
+projectRouter.get("/project/:projectId", getProject);
 
 // POST Request
-projectRouter.post("/project:id", createProject);
+projectRouter.post("/project", createProject);
 
 // PUT Request
-projectRouter.put("/project:id", updateProject);
+projectRouter.put("/project/:projectId", updateProject);
 
 // DELETE Request
-projectRouter.delete("/project:id", deleteProject);
+projectRouter.delete("/project/:projectId", deleteProject);
 
 module.exports = projectRouter;

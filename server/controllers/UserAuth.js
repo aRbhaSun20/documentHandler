@@ -3,8 +3,8 @@ const {
   comparePassword,
 } = require("../middlewares/encrytPassword");
 const Users = require("../models/Users");
-const { sign } = require("jsonwebtoken");
 const { successlog, errorlog } = require("../utils/loggers");
+const { returnSignedToken } = require("../utils/token");
 
 const LoginMiddleWare = async (req, res) => {
   const { email, password } = req.body;
@@ -16,7 +16,6 @@ const LoginMiddleWare = async (req, res) => {
     if (actualPassword) {
       const accessToken = await returnSignedToken({
         _id: user._id,
-        actualPassword,
         email,
       });
       successlog.info(`${user._id} ${email} logged in successfully`);
@@ -46,7 +45,6 @@ const SignUpMiddleWare = async (req, res) => {
       }).save();
       const token = await returnSignedToken({
         _id: user._id,
-        hashedPassword,
         email,
       });
       successlog.info(`${user._id} ${email} signed in successfully`);
@@ -62,10 +60,6 @@ const SignUpMiddleWare = async (req, res) => {
     errorlog.error(`${email} Error in user creation`);
     res.status(400).json({ error: "Error in user creation" });
   }
-};
-
-const returnSignedToken = async (data) => {
-  return await sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "2h" });
 };
 
 module.exports = { LoginMiddleWare, SignUpMiddleWare };
