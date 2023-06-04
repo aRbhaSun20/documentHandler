@@ -4,24 +4,32 @@ const {
 } = require("../middlewares/encrytPassword");
 const Users = require("../models/Users");
 const { sign } = require("jsonwebtoken");
+const { successlog, errorlog } = require("../utils/loggers");
 
 const LoginMiddleWare = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await Users.findOne({ email });
-    console.log(user);
+    const user = await Users.findOne({
+      email,
+    });
     const actualPassword = await comparePassword(user.password, password);
-    console.log(actualPassword);
     if (actualPassword) {
-      const token = await returnSignedToken({ _id: user._id, password, email });
+      const accessToken = await returnSignedToken({
+        _id: user._id,
+        actualPassword,
+        email,
+      });
+      successlog.info(`${user._id} ${email} logged in successfully`);
       res.status(200).json({
-        user,
-        token,
+        email,
+        accessToken,
       });
     } else {
+      errorlog.error(`${user._id} ${email} password doesn't match`);
       res.status(400).json({ error: "password doesn't match" });
     }
-  } catch {
+  } catch (e) {
+    errorlog.error(`${email} doesn't exist`);
     res.status(400).json({ error: "user doesn't exist" });
   }
 };
@@ -41,15 +49,17 @@ const SignUpMiddleWare = async (req, res) => {
         hashedPassword,
         email,
       });
-      res.status(200).json({
+      successlog.info(`${user._id} ${email} signed in successfully`);
+      res.status(201).json({
         user,
         token,
       });
     } else {
+      errorlog.error(`${email} User with email already exist`);
       res.status(400).json({ error: "User with email already exist" });
     }
   } catch (e) {
-    console.log(e);
+    errorlog.error(`${email} Error in user creation`);
     res.status(400).json({ error: "Error in user creation" });
   }
 };
