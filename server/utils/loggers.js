@@ -12,8 +12,8 @@ const consoleConfig = new winston.transports.DailyRotateFile({
   maxFiles: "14d",
   json: false,
   format: winston.format.combine(
-    winston.format.colorize(),
     winston.format.timestamp(),
+    winston.format.json()
   ),
   //   format: winston.format.colorize(),
 });
