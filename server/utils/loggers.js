@@ -11,15 +11,15 @@ const consoleConfig = new winston.transports.DailyRotateFile({
   maxSize: "20m",
   maxFiles: "14d",
   json: false,
-//   format: winston.format.colorize(),
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.timestamp(),
+  ),
+  //   format: winston.format.colorize(),
 });
 
 const successLogger = winston.createLogger({
   level: "info",
-  format: winston.format.combine(
-    winston.format.json(),
-    winston.format.colorize()
-  ),
   defaultMeta: { service: "user-service" },
   transports: [consoleConfig],
   prepend: true,
@@ -27,10 +27,6 @@ const successLogger = winston.createLogger({
 
 const errorLogger = winston.createLogger({
   level: "error",
-  format: winston.format.combine(
-    winston.format.json(),
-    winston.format.colorize()
-  ),
   defaultMeta: { service: "user-service" },
   transports: [consoleConfig],
   prepend: true,
