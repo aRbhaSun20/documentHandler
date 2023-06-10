@@ -35,9 +35,53 @@ const createProject = async (req, res) => {
   }
 };
 
-const updateProject = async (req, res) => {};
+const updateProject = async (req, res) => {
+  const { projectId } = req.params;
+  try {
+    const findProject = await Projects.findOne({ _id: projectId });
+    if (findProject) {
+      await Projects.updateOne({ _id: projectId }, { $set: req.body });
+      successlog.info(
+        `${findProject._id} updated by ${req.userData._id} successfully`
+      );
+      res.status(204).json({
+        message: `${findProject._id} updated by ${req.userData._id} successfully`,
+      });
+    } else {
+      errorlog.error("project doesn't exist");
+      res.status(404).json({
+        error: "project doesn't exist",
+      });
+    }
+  } catch (e) {
+    errorlog.error(e);
+    res.send(400);
+  }
+};
 
-const deleteProject = async (req, res) => {};
+const deleteProject = async (req, res) => {
+  const { projectId } = req.params;
+  try {
+    const findProject = await Projects.findOne({ _id: projectId });
+    if (findProject) {
+      await Projects.deleteOne({ _id: projectId });
+      successlog.info(
+        `${findProject._id} deleted by ${req.userData._id} successfully`
+      );
+      res.status(204).json({
+        message: `${findProject._id} deleted by ${req.userData._id} successfully`,
+      });
+    } else {
+      errorlog.error("project doesn't exist");
+      res.status(404).json({
+        error: "project doesn't exist",
+      });
+    }
+  } catch (e) {
+    errorlog.error(e);
+    res.send(400);
+  }
+};
 
 const getAllProjects = async (req, res) => {
   try {
@@ -55,28 +99,29 @@ const getAllProjects = async (req, res) => {
       });
     }
   } catch (e) {
-    console.error(e);
+    errorlog.error(e);
+    res.send(400);
   }
 };
 
 const getProject = async (req, res) => {
   const { projectId } = req.params;
   try {
-    const findProject =  await Projects.findOne({ _id: projectId });
+    const findProject = await Projects.findOne({ _id: projectId });
     if (findProject) {
       successlog.info(
         `${findProject._id} retrieved by ${req.userData._id} successfully`
       );
       res.status(200).json(findProject);
     } else {
+      errorlog.error("project doesn't exist");
       res.status(404).json({
         error: "project doesn't exist",
       });
     }
   } catch (e) {
-    console.log(e);
     errorlog.error(e);
-    res.status(400);
+    res.send(400);
   }
 };
 
